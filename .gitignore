@@ -1,0 +1,16 @@
+modelfiles*
+**.pyc
+**.sqlite3
+**.safetensors
+**/outputs/**
+**db.sqlite3
+**.png
+*.DS_Store
+**.jpg
+**.jpeg
+src/stable_diffusion_backend/models/full_models/*
+src/stable_diffusion_backend/models/LoRA/*.safetensors
+**lora_conf.py
+
+.env
+**/todo.md
