@@ -8,7 +8,7 @@ modelfiles*
 *.DS_Store
 **.jpg
 **.jpeg
-models/full_models/
+models/full_models/*/
 models/LoRA/*.safetensors
 models/LoRA/lora_conf.py
 
