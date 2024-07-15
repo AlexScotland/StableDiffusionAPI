@@ -8,9 +8,9 @@ modelfiles*
 *.DS_Store
 **.jpg
 **.jpeg
-src/stable_diffusion_backend/models/full_models/*
-src/stable_diffusion_backend/models/LoRA/*.safetensors
-**lora_conf.py
+models/full_models/
+models/LoRA/*.safetensors
+models/LoRA/lora_conf.py
 
 .env
 **/todo.md
