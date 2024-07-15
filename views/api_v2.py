@@ -1,7 +1,7 @@
 import io
 import gc
 import torch
-from diffusers import DiffusionPipeline, StableDiffusionPipeline,StableDiffusionXLPipeline, AutoPipelineForText2Image, StableDiffusionXLControlNetPipeline, StableVideoDiffusionPipeline
+from diffusers import DiffusionPipeline, StableDiffusionPipeline, StableDiffusionXLPipeline, AutoPipelineForText2Image, StableDiffusionXLControlNetPipeline, StableVideoDiffusionPipeline
 from fastapi import Response, UploadFile, Depends, File
 from fastapi.responses import FileResponse
 from fastapi import APIRouter
@@ -30,7 +30,6 @@ def create_all_loras():
 LORAS = create_all_loras()
 
 def find_lora_by_name(name):
-
     for lora in LORAS:
         if lora == name and lora.base_model in SELECTED_MODEL:
             return lora
@@ -43,6 +42,12 @@ def all_lora_full_details():
         if lora.base_model in SELECTED_MODEL:
             ret_list.append(lora)
     return ret_list
+
+@V2_API_ROUTER.put("/download/")
+def download_model_from_hugging_face(model_name: str):
+    pipeline = DiffusionPipeline.from_pretrained(model_name)
+    pipeline.save_pretrained(f"{MODEL_DIRECTORY}/{model_name.split('/')[-1]}")
+    return {"Status": "Downloaded"}
 
 @V2_API_ROUTER.post("/generate/")
 def generate_picture(image: BaseImageRequest):
