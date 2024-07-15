@@ -46,6 +46,7 @@ Now we can set the `SELECTED_MODEL` to the name of the folder we just downloaded
 1. Navigate to our `models/full_models/` directory.
 2. Download the local `.safetensors` file for the ImageGenerationPipeline, 
    1. We can use the Diffusers Pipeline to pull an image from `HuggingFace` using `pipeline = DiffusionPipeline.from_pretrained(model)`
+   2. If you downloaded a `.safetensors` seperately, then use a `from_pretrained(/path/to/file.safetensors, local_files_only =True)` to the directory of the safetensors.
 3. Open (or use the existing Pipeline above) and run `pipeline.save_pretrained(f"{MODEL_DIRECTORY}/{model.split('/')[-1]}")`.  This is done in the deprecated api.
 4. Once we have our model downloded, we can set the `SELECTED_MODEL` to a path to that local file.
 
