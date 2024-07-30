@@ -1,6 +1,8 @@
 import io
 import gc
 import torch
+import os
+
 from diffusers import DiffusionPipeline, StableDiffusionPipeline, StableDiffusionXLPipeline, AutoPipelineForText2Image, StableDiffusionXLControlNetPipeline, StableVideoDiffusionPipeline
 from fastapi import Response, UploadFile, Depends, File
 from fastapi.responses import FileResponse
@@ -19,8 +21,6 @@ V2_API_ROUTER = APIRouter(
     tags=["api"],
     responses={404: {"description": "Not found"}},
 )
-
-#  TODO: Add better way to dynamically change this PIPELINE
 
 def create_all_loras():
     all_loras = []
@@ -43,6 +43,13 @@ def all_lora_full_details(image: BaseImageModelRequest):
         if lora.base_model in image.model:
             ret_list.append(lora)
     return ret_list
+
+@V2_API_ROUTER.get("/models/")
+def get_all_models():
+    model_dir = MODEL_DIRECTORY
+    if not model_dir.endswith("/"): model_dir += "/"
+    return [f for f in os.listdir(model_dir) if os.path.isdir(model_dir+f)]
+
 
 @V2_API_ROUTER.put("/download/")
 def download_model_from_hugging_face(model_name: str):

@@ -18,8 +18,7 @@ As of right now, I do not have this working dockerized.  That may come in the fu
 First thing we need to do is assign the following ENV variables:
 - `BASE_DIRECTORY`: This is the base directory of the repository.
   - This is used when finding LoRAs and PipelineFiles
-- `SELECTED_MODEL`: This is used to select the current Image Model.
-  - In the future, we will be assigning this via POST request.
+- `SELECTED_MODEL`: This is the default Model to use if not provided.
 - `SELECTED_VIDEO_MODEL`: This *WILL* be used for IMG2Video.  The code is here and **working** - I just found it was not a very good experience for my usecase', but can be used with the code in the deprectated [API V1 file](routes/api.py)
 
 #### Adding Models
