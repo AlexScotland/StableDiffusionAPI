@@ -12,6 +12,7 @@ from models.code_models.base_image_pipeline import BaseImagePipeline
 from settings import MODEL_DIRECTORY, SELECTED_MODEL, SELECTED_VIDEO_MODEL, BASE_DIR
 
 from models.code_models.base_image_request import BaseImageRequest
+from models.code_models.base_image_model_request import BaseImageModelRequest
 
 V2_API_ROUTER = APIRouter(
     prefix="/v2/api",
@@ -29,17 +30,17 @@ def create_all_loras():
     
 LORAS = create_all_loras()
 
-def find_lora_by_name(name):
+def find_lora_by_name(name, model):
     for lora in LORAS:
-        if lora == name and lora.base_model in SELECTED_MODEL:
+        if lora == name and lora.base_model in model:
             return lora
     return None
 
-@V2_API_ROUTER.get("/loras/")
-def all_lora_full_details():
+@V2_API_ROUTER.post("/loras/")
+def all_lora_full_details(image: BaseImageModelRequest):
     ret_list = []
     for lora in LORAS:
-        if lora.base_model in SELECTED_MODEL:
+        if lora.base_model in image.model:
             ret_list.append(lora)
     return ret_list
 
@@ -52,9 +53,15 @@ def download_model_from_hugging_face(model_name: str):
 @V2_API_ROUTER.post("/generate/")
 def generate_picture(image: BaseImageRequest):
     # TODO: Dreambooth instead of base_lora
-    base_lora = find_lora_by_name(image.base_lora)
-    contextual_lora = find_lora_by_name(image.contextual_lora)
-    pipeline = BaseImagePipeline(MODEL_DIRECTORY, SELECTED_MODEL, base_lora=base_lora)
+    base_lora = find_lora_by_name(
+        image.base_lora,
+        image.model
+        )
+    contextual_lora = find_lora_by_name(
+        image.contextual_lora,
+        image.model
+        )
+    pipeline = BaseImagePipeline(MODEL_DIRECTORY, image.model, base_lora=base_lora)
     image_store = io.BytesIO()
     for generated_image in pipeline.generate_image(
         image.prompt,
