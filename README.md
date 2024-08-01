@@ -1,8 +1,6 @@
 # Stable Diffusion API Wrapper
-## AlexScotland
 
-# Description
-Fast API Endpoint that supports LoRA integration with Image Generation!
+Fast API Endpoint that supports LoRA integration with local Image Generation!
 
 
 # Dependencies
@@ -27,6 +25,8 @@ I really didn't want to spend money and wanted to do it all on my own`¯\_( ͡°
 
 To add a model, we do one of the following:
 ##### Via API (Easiest)
+You will need network connectivity to download as the model is pulled from HuggingFace Registry.  
+
 We can make a `PUT` request to `/download/` containing the name of the Model.
 ```json
 {
@@ -40,14 +40,20 @@ A successful message looks like:
   "Status": "Downloaded"
 }
 ```
-Now we can set the `SELECTED_MODEL` to the name of the folder we just downloaded.
-##### Manually
-1. Navigate to our `models/full_models/` directory.
-2. Download the local `.safetensors` file for the ImageGenerationPipeline, 
-   1. We can use the Diffusers Pipeline to pull an image from `HuggingFace` using `pipeline = DiffusionPipeline.from_pretrained(model)`
-   2. If you downloaded a `.safetensors` seperately, then use a `from_pretrained(/path/to/file.safetensors, local_files_only =True)` to the directory of the safetensors.
-3. Open (or use the existing Pipeline above) and run `pipeline.save_pretrained(f"{MODEL_DIRECTORY}/{model.split('/')[-1]}")`.  This is done in the deprecated api.
-4. Once we have our model downloded, we can set the `SELECTED_MODEL` to a path to that local file.
+You can now see this model in the `/models/` api call.
+##### Manually Offline
+Use this method if you want to install a predownloaded `.safetensors` file.
+
+1. Download the local `.safetensors` file to the `MODEL_DIRECTORY`
+3. Make a POST request to `/export/safetensor`, containing the model name (with or without `.safetensors`).
+
+```json
+{
+"safetensor_name": "my_local_safetensor.safetensors"
+}
+```
+
+The Pipeline will not save this safetensor as a model folder, for local use. It will also delete the safetensors file.
 
 #### Starting API
 To start the API, we use `fastapi run` or `fastapi dev`.  
