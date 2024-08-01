@@ -11,6 +11,7 @@ from fastapi import APIRouter
 from factories.lora_factory import LoRAFactory
 from models.LoRA.lora_conf import ALL_LORAS
 from models.code_models.base_image_pipeline import BaseImagePipeline
+from models.code_models.abstract_image_pipeline import AbstractImagePipeline
 from settings import MODEL_DIRECTORY, SELECTED_MODEL, SELECTED_VIDEO_MODEL, BASE_DIR
 
 from models.code_models.base_image_request import BaseImageRequest
@@ -115,7 +116,7 @@ def generate_picture(image: BaseImageRequest):
         image.contextual_lora,
         image.model
         )
-    pipeline = BaseImagePipeline(MODEL_DIRECTORY, image.model, base_lora=base_lora)
+    pipeline = AbstractImagePipeline(MODEL_DIRECTORY, image.model, base_lora=base_lora)
     image_store = io.BytesIO()
     for generated_image in pipeline.generate_image(
         image.prompt,
