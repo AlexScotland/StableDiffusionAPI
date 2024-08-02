@@ -1,0 +1,3 @@
+from settings import BASE_DIR
+
+ALL_LORAS ={}

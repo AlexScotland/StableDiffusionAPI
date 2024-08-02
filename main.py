@@ -1,8 +1,15 @@
-# from fastapi import FastAPI
+import shutil
+
+try:
+    from models.LoRA.lora_conf import ALL_LORAS
+except ModuleNotFoundError:
+    shutil.copyfile("models/LoRA/lora_conf.template", "models/LoRA/lora_conf.py")
+    print("Script may fail, please rerun :)")
 from fastapi_offline import FastAPIOffline
-# from routes.api import api_router
 from views.api_v2 import V2_API_ROUTER
 from fastapi.middleware.cors import CORSMiddleware
+
+# Create LoRA
 
 # fast api init
 app = FastAPIOffline()
