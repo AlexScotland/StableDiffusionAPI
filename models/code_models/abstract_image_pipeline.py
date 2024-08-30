@@ -1,5 +1,5 @@
 import torch
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusionPipeline, FluxPipeline
 
 from models.code_models.base_image_pipeline import BaseImagePipeline
 from models.code_models.lora import LoRA
@@ -28,18 +28,33 @@ class AbstractImagePipeline(BaseImagePipeline):
             )
         except AttributeError:
             # Raised when we call functions only existing in SDXL, try SD 1.5 compatibility
+            print("We are now trying the 1.5 pipeline")
             self.pipeline = self._generate_pipeline(StableDiffusionPipeline)
+        try:
             image = self.create_image(
-                prompt,
-                height,
-                width,
-                lora_choice,
-                negative_prompt,
-                steps,
-                number_of_images,
-            )
+            prompt,
+            height,
+            width,
+            lora_choice,
+            negative_prompt,
+            steps,
+            number_of_images,
+        )
+        except AttributeError:
+            # Raised when we call functions only existing in Flux...
+            print("We are now trying the Flux pipeline")
+            self.pipeline = self._generate_pipeline(FluxPipeline)
+        image = self.create_image(
+            prompt,
+            height,
+            width,
+            lora_choice,
+            negative_prompt,
+            steps,
+            number_of_images,
+        )
         return image
-        
+     
     def create_image(
             self,
             prompt,

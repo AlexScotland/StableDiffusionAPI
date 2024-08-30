@@ -3,7 +3,7 @@ import gc
 import torch
 import os
 
-from diffusers import DiffusionPipeline, StableDiffusionPipeline, StableDiffusionXLPipeline, AutoPipelineForText2Image, StableDiffusionXLControlNetPipeline, StableVideoDiffusionPipeline
+from diffusers import DiffusionPipeline, StableDiffusionPipeline, StableDiffusionXLPipeline, AutoPipelineForText2Image
 from fastapi import Response, UploadFile, Depends, File
 from fastapi.responses import FileResponse
 from fastapi import APIRouter
@@ -89,11 +89,18 @@ def export_safetensor_local(safetensor_name: str):
         )
     except TypeError as type_error_message:
         if "tokenizer" or "encoder" in type_error_message:
-            pipeline = StableDiffusionPipeline.from_single_file(
-                safetensor_directory,
-                local_files_only=True,
-                use_safetensors=True
-                )
+            try:
+                pipeline = StableDiffusionPipeline.from_single_file(
+                    safetensor_directory,
+                    local_files_only=True,
+                    use_safetensors=True
+                    )
+            except TypeError as type_error_message:
+                pipeline = FluxPipeline.from_single_file(
+                    safetensor_directory,
+                    local_files_only=True,
+                    use_safetensors=True
+                    )
         else:
             raise type_error_message
     pipeline.save_pretrained(model_export_directory)
@@ -116,7 +123,11 @@ def generate_picture(image: BaseImageRequest):
         image.contextual_lora,
         image.model
         )
-    pipeline = AbstractImagePipeline(MODEL_DIRECTORY, image.model, base_lora=base_lora)
+    pipeline = AbstractImagePipeline(
+        MODEL_DIRECTORY,
+        image.model,
+        base_lora=base_lora,
+        diffuser=AutoPipelineForText2Image)
     image_store = io.BytesIO()
     for generated_image in pipeline.generate_image(
         image.prompt,
