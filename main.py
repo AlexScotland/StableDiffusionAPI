@@ -6,7 +6,7 @@ except ModuleNotFoundError:
     shutil.copyfile("models/LoRA/lora_conf.template", "models/LoRA/lora_conf.py")
     print("Script may fail, please rerun :)")
 from fastapi_offline import FastAPIOffline
-from views.api_v2 import V2_API_ROUTER
+from routers.main import MAIN_ROUTER
 from fastapi.middleware.cors import CORSMiddleware
 
 # Create LoRA
@@ -22,5 +22,4 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-app.include_router(V2_API_ROUTER)
+app.include_router(MAIN_ROUTER)
