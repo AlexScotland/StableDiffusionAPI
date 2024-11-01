@@ -5,3 +5,5 @@ SELECTED_MODEL = os.getenv("SELECTED_MODEL","stable-video-diffusion")
 SELECTED_VIDEO_MODEL = os.getenv("SELECTED_VIDEO_MODEL","stable-video-diffusion-img2vid-xt")
 
 MODEL_DIRECTORY = f"{BASE_DIR}/models/full_models"
+
+PACKAGE_DIR = f"{BASE_DIR}/api_packages"
