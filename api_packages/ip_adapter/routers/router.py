@@ -1,13 +1,18 @@
 import io
 
 from fastapi import APIRouter, Response, UploadFile, Depends, File
+from ip_adapter.custom_pipelines import StableDiffusionXLCustomPipeline
+from diffusers import DDIMScheduler, AutoencoderKL, StableDiffusionPipeline, StableDiffusionXLPipeline
+from PIL import Image
+
+from ip_adapter import IPAdapterPlus
 
 from settings import MODEL_DIRECTORY
 
-from models.code_models.image_to_image_request import Image2ImageRequest
-from models.code_models.abstract_image_to_image_pipeline import AbstractImageToImagePipeline
+from ..models.serializers.base_image import BaseImage
+from ..models.image_pipeline import SDImagePipeline
 
-from routers.v2 import find_lora_by_name, __clean_up_pipeline
+from routers.v2 import __clean_up_pipeline
 
 
 ROUTER = APIRouter(
@@ -16,29 +21,34 @@ ROUTER = APIRouter(
 )
 
 @ROUTER.post("/generate/")
-def generate_picture_from_picture(image: Image2ImageRequest = Depends(), uploaded_image: UploadFile=File(...)):
-    # TODO: Dreambooth instead of base_lora
-    contextual_lora = find_lora_by_name(
-        image.lora_choice,
-        image.pipeline
-        )
-    pipeline = AbstractImageToImagePipeline(
-        MODEL_DIRECTORY, 
-        image.pipeline)
+def generate(image: BaseImage = Depends(), uploaded_image: UploadFile=File(...)):
+
+    noise_scheduler = DDIMScheduler(
+        num_train_timesteps=1000,
+        beta_start=0.00085,
+        beta_end=0.012,
+        beta_schedule="scaled_linear",
+        clip_sample=False,
+        set_alpha_to_one=False,
+        steps_offset=1,
+    )
+
+    image_pipeline = SDImagePipeline(
+        MODEL_DIRECTORY,
+        image.model,
+        noise_scheduler_ddim=noise_scheduler,
+        diffuser=StableDiffusionXLCustomPipeline
+    )
     image_store = io.BytesIO()
-    for generated_image in pipeline.generate_image(
-        image.prompt,
-        uploaded_image,
-        image.strength,
-        image.guidance,
+    image = image_pipeline.create_image(
+        prompt = image.prompt,
+        image = Image.open(io.BytesIO(uploaded_image.file.read())),
+        scale = 0.7,
         height=image.height,
-        width=image.width,
-        negative_prompt=image.negative_prompt,
-        lora_choice=contextual_lora):
-        generated_image.save(image_store,"png")
-        break
+        width=image.width)
+    image[0].save(image_store,"png")
 
     # Cleanup our pipeline
-    __clean_up_pipeline(pipeline)
+    __clean_up_pipeline(image_pipeline)
 
     return Response(content=image_store.getvalue(), media_type="image/png")

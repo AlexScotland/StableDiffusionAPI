@@ -14,8 +14,8 @@ or
 1. pip install -r .requirements.txt
 
 # Model Installation
-1. cd IP-Adapter
-2. git lfs install
-3. git clone https://huggingface.co/h94/IP-Adapter
-4. mv IP-Adapter/models models
-5. mv IP-Adapter/sdxl_models sdxl_models
+1. `cd api_packes/ip_adapter`
+2. `git lfs install`
+3. `git clone https://huggingface.co/h94/IP-Adapter`
+4. `mv IP-Adapter/models api_packes/ip_adapter/models`
+5. `mv IP-Adapter/sdxl_models api_packes/ip_adapter/sdxl_models`

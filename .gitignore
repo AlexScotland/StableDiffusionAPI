@@ -1,3 +1,6 @@
+# Plugins
+api_packages/**/image_models
+# Rest
 modelfiles*
 **.pyc
 **.sqlite3
