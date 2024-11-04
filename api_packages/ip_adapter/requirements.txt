@@ -1,2 +1,2 @@
-installed einops-0.8.0
+einops==0.8.0
 git+https://github.com/tencent-ailab/IP-Adapter.git

@@ -16,7 +16,7 @@ from routers.v2 import __clean_up_pipeline
 
 
 ROUTER = APIRouter(
-    prefix="/ip_adapter",
+    prefix="/base_ip_adapter",
     tags=["IP Adapters for Same character images"]
 )
 
