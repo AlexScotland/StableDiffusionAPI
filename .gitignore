@@ -1,5 +1,6 @@
 # Plugins
 api_packages/**/image_models
+api_packages/**
 # Rest
 modelfiles*
 **.pyc
