@@ -8,5 +8,5 @@ safetensors==0.4.3
 peft==0.11.1
 pydantic==2.7.1
 opencv-python==4.10.0.82
-python-multipart==0.0.9
+python-multipart==0.0.18
 fastapi-offline==1.7.1
